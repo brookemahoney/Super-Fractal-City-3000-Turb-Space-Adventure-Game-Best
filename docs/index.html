@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Super Fractal City 3000 Turb Space Adventure Game Best</title>
+<meta name="description" content="Super Fractal City 3000 Turb Space Adventure Game Best — a full-screen pastel pink &amp; purple fractal you can play with with your cursor." />
+<meta name="theme-color" content="#160a24" />
+<style>
+  :root{
+    --pink:   #ffc2e9;
+    --lilac:  #d9b8ff;
+    --violet: #a684ff;
+    --plum:   #2a0f3d;
+    --ink:    #12071d;
+    --glass:  rgba(255, 214, 245, .10);
+    --stroke: rgba(255, 214, 245, .30);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--ink);
+    color: #ffeafb;
+    font-family: "Trebuchet MS", "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+    touch-action: none;
+  }
+
+  /* ---------- fractal stage ---------- */
+  #fx{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+    background:
+      radial-gradient(120% 90% at 50% 15%, #3b1257 0%, #1b0a2e 55%, #0d0518 100%);
+  }
+
+  /* ---------- drifting starfield ---------- */
+  .stars{
+    position: fixed;
+    inset: -50%;
+    pointer-events: none;
+    z-index: 2;
+    opacity: .55;
+    background-image:
+      radial-gradient(1.4px 1.4px at 20% 30%,  rgba(255,255,255,.9), transparent 60%),
+      radial-gradient(1.2px 1.2px at 70% 15%,  rgba(255,214,245,.9), transparent 60%),
+      radial-gradient(1.6px 1.6px at 45% 75%,  rgba(214,190,255,.9), transparent 60%),
+      radial-gradient(1.1px 1.1px at 85% 60%,  rgba(255,255,255,.8), transparent 60%),
+      radial-gradient(1.3px 1.3px at 10% 85%,  rgba(255,199,235,.85), transparent 60%),
+      radial-gradient(1px 1px   at 60% 45%,   rgba(255,255,255,.7), transparent 60%),
+      radial-gradient(1.5px 1.5px at 33% 55%, rgba(255,231,250,.75), transparent 60%);
+    background-size: 340px 340px, 520px 520px, 280px 280px, 610px 610px, 420px 420px, 700px 700px, 480px 480px;
+    animation: drift 190s linear infinite, twinkle 7s ease-in-out infinite alternate;
+    mix-blend-mode: screen;
+  }
+  @keyframes drift{
+    from{ transform: translate3d(0,0,0); }
+    to  { transform: translate3d(-340px,-260px,0); }
+  }
+  @keyframes twinkle{
+    from{ opacity: .38; }
+    to  { opacity: .78; }
+  }
+
+  /* ---------- vignette ---------- */
+  .vignette{
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background:
+      radial-gradient(140% 105% at 50% 45%, transparent 58%, rgba(22,5,38,.22) 82%, rgba(12,3,22,.52) 100%);
+  }
+
+  /* ---------- title ---------- */
+  .title{
+    position: fixed;
+    z-index: 5;
+    top: clamp(14px, 3.2vh, 34px);
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 18px 16px 34px;
+    margin: calc(-1 * clamp(14px, 3.2vh, 34px)) 0 0;
+    pointer-events: none;
+    transition: opacity .55s ease, transform .55s ease;
+    background: radial-gradient(120% 130% at 50% 0%, rgba(18,4,32,.62) 0%, rgba(18,4,32,.34) 45%, transparent 78%);
+  }
+  .title h1{
+    margin: 0;
+    font-size: clamp(15px, 3.4vw, 40px);
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: .5px;
+    background: linear-gradient(96deg, #fff2fb 0%, #ffc0e8 22%, #e0b3ff 46%, #b98cff 68%, #ffd0ee 92%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 14px rgba(214,120,255,.55)) drop-shadow(0 0 34px rgba(255,140,220,.28));
+    animation: shimmer 9s ease-in-out infinite alternate;
+  }
+  .title p{
+    margin: .5em 0 0;
+    font-size: clamp(9px, 1.5vw, 13px);
+    letter-spacing: .42em;
+    text-transform: uppercase;
+    color: rgba(255, 226, 248, .62);
+    text-shadow: 0 0 16px rgba(190, 120, 255, .5);
+  }
+  @keyframes shimmer{
+    from{ filter: drop-shadow(0 2px 14px rgba(214,120,255,.45)) drop-shadow(0 0 26px rgba(255,140,220,.2)); }
+    to  { filter: drop-shadow(0 2px 16px rgba(255,160,225,.65)) drop-shadow(0 0 42px rgba(214,150,255,.42)); }
+  }
+
+  /* ---------- control dock ---------- */
+  .dock{
+    position: fixed;
+    z-index: 6;
+    left: 50%;
+    bottom: clamp(14px, 3.4vh, 34px);
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 999px;
+    background: var(--glass);
+    border: 1px solid var(--stroke);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    box-shadow:
+      0 10px 40px rgba(10,2,24,.55),
+      inset 0 1px 0 rgba(255,255,255,.28),
+      0 0 26px rgba(206,124,255,.24);
+    transition: opacity .55s ease, transform .55s ease;
+  }
+
+  button{
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #fff3fc;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,214,245,.34);
+    background: linear-gradient(180deg, rgba(255,190,236,.30), rgba(168,110,255,.24));
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .22s ease, background .22s ease, border-color .22s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:hover{
+    transform: translateY(-2px) scale(1.04);
+    background: linear-gradient(180deg, rgba(255,205,243,.48), rgba(184,126,255,.40));
+    box-shadow: 0 8px 22px rgba(198,110,255,.42), 0 0 20px rgba(255,170,230,.30);
+  }
+  button:active{ transform: translateY(0) scale(.97); }
+  button:focus-visible{ outline: 2px solid #ffd9f2; outline-offset: 3px; }
+  button[aria-pressed="true"]{
+    background: linear-gradient(180deg, rgba(255,236,250,.62), rgba(214,150,255,.52));
+    border-color: rgba(255,240,252,.75);
+    box-shadow: 0 0 22px rgba(255,175,235,.55);
+  }
+  button .key{
+    opacity: .55;
+    font-size: 10px;
+    margin-left: 7px;
+    letter-spacing: 0;
+  }
+
+  .divider{
+    width: 1px;
+    height: 24px;
+    background: linear-gradient(180deg, transparent, rgba(255,214,245,.45), transparent);
+  }
+
+  /* ---------- hint ---------- */
+  .hint{
+    position: fixed;
+    z-index: 5;
+    left: 50%;
+    bottom: clamp(74px, 11vh, 96px);
+    transform: translateX(-50%);
+    padding: 7px 15px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    letter-spacing: .06em;
+    color: rgba(255,232,250,.82);
+    background: rgba(30,8,52,.34);
+    border: 1px solid rgba(255,214,245,.18);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    pointer-events: none;
+    white-space: nowrap;
+    transition: opacity .8s ease;
+  }
+
+  /* ---------- hide chrome for a clean fullscreen look ---------- */
+  body.chrome-off .title,
+  body.chrome-off .dock,
+  body.chrome-off .hint{
+    opacity: 0;
+    pointer-events: none;
+  }
+  body.chrome-off .dock{ transform: translateX(-50%) translateY(24px); }
+
+  /* ---------- boot / error ---------- */
+  .boot{
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-content: center;
+    gap: 14px;
+    justify-items: center;
+    text-align: center;
+    background: radial-gradient(80% 60% at 50% 45%, #3a1257, #12072270 70%, #0b0416);
+    color: #ffe6f8;
+    transition: opacity .7s ease, visibility .7s;
+  }
+  .boot.gone{ opacity: 0; visibility: hidden; }
+  .boot .ring{
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,190,236,.22);
+    border-top-color: #ffc0e8;
+    border-right-color: #b98cff;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .boot strong{
+    font-size: clamp(14px, 2.6vw, 20px);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    background: linear-gradient(96deg, #fff2fb, #ffc0e8 40%, #b98cff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .boot em{ font-style: normal; font-size: 12.5px; color: rgba(255,220,246,.7); max-width: 34ch; line-height: 1.6; }
+
+  @media (max-width: 620px){
+    .dock{ gap: 5px; padding: 7px; }
+    button{ padding: 9px 11px; font-size: 11px; }
+    button .key{ display: none; }
+    .hint{ font-size: 10px; bottom: 68px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .stars{ animation: none; }
+    .title h1{ animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="fx" aria-label="Interactive pastel fractal"></canvas>
+<div class="stars" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<header class="title">
+  <h1>Super Fractal City 3000 Turb Space Adventure Game Best</h1>
+  <p>Explore &nbsp;·&nbsp; Warp &nbsp;·&nbsp; Dream</p>
+</header>
+
+<div class="hint" id="hint">Move your cursor to bend the city &nbsp;·&nbsp; drag to drift &nbsp;·&nbsp; scroll to dive</div>
+
+<nav class="dock" aria-label="Fractal controls">
+  <button id="btnFull" type="button" title="Toggle fullscreen (F)">Fullscreen<span class="key">F</span></button>
+  <span class="divider" aria-hidden="true"></span>
+  <button id="btnTour" type="button" aria-pressed="true" title="Toggle the guided tour (Space)">Auto Tour<span class="key">Space</span></button>
+  <button id="btnPal" type="button" title="Cycle colour moods (C)">Cotton Candy<span class="key">C</span></button>
+  <span class="divider" aria-hidden="true"></span>
+  <button id="btnReset" type="button" title="Return home (R)">Reset<span class="key">R</span></button>
+  <button id="btnUI" type="button" title="Hide the interface (H)">Hide UI<span class="key">H</span></button>
+</nav>
+
+<div class="boot" id="boot">
+  <div class="ring"></div>
+  <strong>Charging the Fractal Core</strong>
+  <em id="bootMsg">Summoning pastel megastructures…</em>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     Super Fractal City 3000 Turb Space Adventure Game Best
+     WebGL fractal: Mandelbrot + Julia layers, pastel palettes,
+     cursor gravity / swirl influence.
+     ============================================================ */
+
+  var canvas   = document.getElementById("fx");
+  var boot     = document.getElementById("boot");
+  var bootMsg  = document.getElementById("bootMsg");
+  var hintEl   = document.getElementById("hint");
+  var dock     = document.querySelector(".dock");
+
+  /* ---------- context ---------- */
+  var gl = canvas.getContext("webgl2", { antialias: false, alpha: false, depth: false, stencil: false, powerPreference: "high-performance" });
+  var isGL2 = !!gl;
+  if (!gl) {
+    gl = canvas.getContext("webgl", { antialias: false, alpha: false, depth: false, stencil: false }) ||
+         canvas.getContext("experimental-webgl");
+  }
+  if (!gl) {
+    bootMsg.textContent = "This browser could not start WebGL. Try a hardware-accelerated browser to visit Fractal City.";
+    var ring = boot.querySelector(".ring");
+    if (ring) ring.style.animation = "none";
+    return;
+  }
+
+  /* ---------- shaders ---------- */
+  var VERT = "attribute vec2 aPos;\nvoid main(){ gl_Position = vec4(aPos, 0.0, 1.0); }";
+
+  var FRAG_BODY = [
+    "precision highp float;",
+    "precision highp int;",
+    "",
+    "uniform vec2  u_res;",
+    "uniform vec2  u_center;",
+    "uniform float u_scale;",
+    "uniform float u_time;",
+    "uniform vec2  u_mouse;",
+    "uniform vec2  u_mouseVel;",
+    "uniform float u_speed;",
+    "uniform float u_press;",
+    "uniform float u_presence;",
+    "uniform float u_warp;",
+    "uniform float u_pal;",
+    "uniform int   u_iter;",
+    "",
+    "vec2 mul(vec2 a, vec2 b){ return vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x); }",
+    "",
+    "// rotate hue so the mood button can retint the whole city",
+    "vec3 hueShift(vec3 c, float h){",
+    "  vec3 k = vec3(0.57735027);",
+    "  float a = h * 6.28318530718;",
+    "  float ca = cos(a);",
+    "  return c * ca + cross(k, c) * sin(a) + k * dot(k, c) * (1.0 - ca);",
+    "}",
+    "",
+    "// hand-mixed candy gradient: deep plum -> violet -> magenta -> bubblegum -> pale pink",
+    "vec3 ramp(float t, float shift){",
+    "  t = clamp(t, 0.0, 1.0) * 5.0;",
+    "  vec3 c0 = vec3(0.055, 0.014, 0.115);",
+    "  vec3 c1 = vec3(0.210, 0.048, 0.330);",
+    "  vec3 c2 = vec3(0.470, 0.120, 0.580);",
+    "  vec3 c3 = vec3(0.790, 0.290, 0.680);",
+    "  vec3 c4 = vec3(0.950, 0.560, 0.810);",
+    "  vec3 c5 = vec3(0.985, 0.790, 0.930);",
+    "  vec3 col;",
+    "  if      (t < 1.0) col = mix(c0, c1, t);",
+    "  else if (t < 2.0) col = mix(c1, c2, t - 1.0);",
+    "  else if (t < 3.0) col = mix(c2, c3, t - 2.0);",
+    "  else if (t < 4.0) col = mix(c3, c4, t - 3.0);",
+    "  else              col = mix(c4, c5, t - 4.0);",
+    "  return hueShift(col, shift);",
+    "}",
+    "",
+    "// Mandelbrot. x = smooth escape (-1 inside), y = min|z| trap, zw = mid-orbit point.",
+    "vec4 mandelbrot(vec2 c, int maxIter){",
+    "  vec2 z = vec2(0.0);",
+    "  vec2 zm = vec2(0.0);",
+    "  float n = 0.0;",
+    "  float trap = 1.0e9;",
+    "  for (int i = 0; i < 700; i++){",
+    "    if (n >= float(maxIter)) break;",
+    "    z = mul(z, z) + c;",
+    "    n += 1.0;",
+    "    if (n == 18.0) zm = z;",
+    "    if (n > 6.0) trap = min(trap, dot(z, z));",
+    "    if (dot(z, z) > 1024.0) break;",
+    "  }",
+    "  if (n >= float(maxIter)) return vec4(-1.0, trap, zm.x, zm.y);",
+    "  float lz = 0.5 * log(max(dot(z, z), 1e-8));",
+    "  return vec4(n + 1.0 - log(max(lz, 1e-8)) / 0.6931471805599453, trap, zm.x, zm.y);",
+    "}",
+    "",
+    "float julia(vec2 c, vec2 k, int maxIter){",
+    "  vec2 z = c;",
+    "  float n = 0.0;",
+    "  for (int i = 0; i < 700; i++){",
+    "    if (n >= float(maxIter)) break;",
+    "    z = mul(z, z) + k;",
+    "    n += 1.0;",
+    "    if (dot(z, z) > 1024.0) break;",
+    "  }",
+    "  return n;",
+    "}",
+    "",
+    "void main(){",
+    "  vec2 uv = (fragCoord() - 0.5 * u_res) / u_res.y;",
+    "  vec2 mUv = (u_mouse - 0.5 * u_res) / u_res.y;",
+    "",
+    "  float md   = length(uv - mUv);",
+    "  float infl = exp(-md * md * 15.0);",
+    "  float ripple = sin(md * 34.0 - u_time * 5.0) * exp(-md * 5.0);",
+    "",
+    "  // ---- cursor gravity: the fractal is tugged toward the pointer ----",
+    "  vec2  c = uv;",
+    "  float grab = (0.018 + 0.085 * u_speed + 0.035 * u_press) * infl;",
+    "  c -= (uv - mUv) * grab;",
+    "",
+    "  // ---- cursor vortex: swirl spins with pointer velocity ----",
+    "  float ang = infl * (2.8 * u_speed - 0.30 * (0.4 + u_press));",
+    "  float ca = cos(ang), sa = sin(ang);",
+    "  c = mUv + vec2(ca * (c.x - mUv.x) - sa * (c.y - mUv.y),",
+    "                sa * (c.x - mUv.x) + ca * (c.y - mUv.y));",
+    "",
+    "  // ---- crystal lens: the city bulges open beneath the pointer ----",
+    "  float lensR = 0.26 + 0.12 * u_speed;",
+    "  float lens  = smoothstep(lensR, 0.0, md) * u_presence;",
+    "  float zoom  = 1.0 + lens * (1.45 + 2.10 * u_speed + 0.60 * u_press);",
+    "  c = mUv + (c - mUv) / zoom;",
+    "",
+    "  // ---- gentle living warp ----",
+    "  c += 0.0125 * vec2(sin(c.y * 3.1 + u_time * 0.55), cos(c.x * 2.7 - u_time * 0.47));",
+    "",
+    "  vec2 mc = c * u_scale + u_center;",
+    "",
+    "  int maxIter = u_iter;",
+    "  vec4 mres = mandelbrot(mc, maxIter);",
+    "  bool inside = (mres.x < 0.0);",
+    "  float nu = clamp(abs(mres.x), 0.0, float(maxIter));",
+    "  float x = nu / float(maxIter);",    "",
+    "  // ---- repeating pastel bands (triangle wave keeps the cycle seamless) ----",
+    "  float band = log(1.0 + nu * 1.6) / log(1.0 + float(maxIter) * 1.6);",
+    "  float drift = 0.030 * sin(u_time * 0.11);",
+    "  float b = abs(fract(band * 7.0 + drift) * 2.0 - 1.0);",
+    "  vec3 col = ramp(b, u_pal) * (0.58 + 0.42 * smoothstep(0.0, 0.45, band));",
+    "",
+    "  // ---- interior: deep plum megacity lit by drifting filaments ----",
+    "  if (inside){",
+    "    float w1 = 0.5 + 0.5 * sin(mres.z * 8.0 + mres.w * 6.0 + u_time * 0.30);",
+    "    float w2 = 0.5 + 0.5 * sin(mres.z * 19.0 - mres.w * 14.0 - u_time * 0.21);",
+    "    float tr = clamp(log(1.0 + mres.y) * 1.2, 0.0, 1.0);",
+    "    col = mix(vec3(0.022, 0.007, 0.050), vec3(0.215, 0.055, 0.345), w1 * 0.85);",
+    "    col += vec3(0.72, 0.24, 0.68) * pow(w2, 5.0) * 0.45;",
+    "    col += vec3(0.92, 0.52, 0.86) * pow(tr, 3.0) * 0.22;",
+    "  }",
+    "",
+    "  // ---- neon halo hugging the coastline ----",
+    "  float halo = smoothstep(0.45, 1.0, x);",
+    "  float core = smoothstep(0.90, 1.0, x);",
+    "  col += vec3(0.95, 0.40, 0.78) * halo * halo * 0.50;",
+    "  col += vec3(1.00, 0.84, 0.96) * core * 0.50;",
+    "",
+    "  // ---- second layer: drifting Julia nebula, screen blended ----",
+    "  float jr = 0.34 + 0.14 * sin(u_time * 0.11);",
+    "  vec2  jk = jr * vec2(cos(u_time * 0.083), sin(u_time * 0.121));",
+    "  jk += 0.25 * mUv * u_speed * infl;",
+    "  float jn  = julia(c * u_scale * 0.80 - u_center * 0.50, jk, maxIter / 2 + 24);",
+    "  float jband = log(1.0 + jn * 1.6) / log(1.0 + float(maxIter / 2 + 24) * 1.6);",
+    "  float jb = abs(fract(jband * 7.0 + 0.35 - u_time * 0.010) * 2.0 - 1.0);",
+    "  vec3  jcol = ramp(jb, u_pal + 0.12);",
+    "  float jm = smoothstep(0.10, 0.7, jband);",
+    "  col = 1.0 - (1.0 - col) * (1.0 - jcol * 0.17 * jm);",
+    "",
+    "  // ---- cursor aura + neon lens rim ----",
+    "  vec3 aura = mix(vec3(1.00, 0.62, 0.88), vec3(0.72, 0.58, 1.00), 0.5 + 0.5 * sin(u_time * 0.9));",
+    "  col += aura * infl * (0.16 + 0.34 * u_speed + 0.10 * u_press) * u_presence;",
+    "  col += aura * max(ripple, 0.0) * 0.06 * u_presence;",
+    "  float ring = smoothstep(0.013, 0.0, abs(md - lensR)) * u_presence;",
+    "  col += aura * ring * (0.30 + 0.45 * u_speed);",
+    "",
+    "  // ---- hyperspace jump: light streaks tearing out of the core ----",
+    "  if (u_warp > 0.001){",
+    "    vec2 d2 = c - mUv;",
+    "    float a2 = atan(d2.y, d2.x);",
+    "    float streak = 0.5 + 0.5 * sin(a2 * 54.0 + u_time * 24.0);",
+    "    streak = pow(streak, 3.0);",
+    "    float fall = exp(-length(d2) * 3.4);",
+    "    col += vec3(1.00, 0.74, 0.96) * u_warp * (0.16 + 0.62 * streak) * (0.25 + 0.75 * fall);",
+    "    col = mix(col, vec3(1.00, 0.90, 0.99), u_warp * 0.28);",
+    "  }",
+    "",
+    "  // ---- tonemap + grade ----",
+    "  col = 1.0 - exp(-col * 1.12);",
+    "  col = pow(max(col, 0.0), vec3(0.88));",
+    "  col *= vec3(1.03, 0.95, 1.06);",
+    "  float v = length(uv);",
+    "  col *= 1.0 - 0.26 * smoothstep(0.60, 1.40, v);",
+    "",
+    "  fragColor = vec4(col, 1.0);",
+    "}"
+  ].join("\n").replace(/fragCoord\(\)/g, "gl_FragCoord.xy");
+
+  function fragSource(body) {
+    if (isGL2) {
+      return "#version 300 es\n" + body.replace(/\bfragColor\b/g, "outColor")
+        .replace(/precision highp float;/, "precision highp float;\nout vec4 outColor;");
+    }
+    return body.replace(/\bfragColor\b/g, "gl_FragColor");
+  }
+
+  function compile(type, src) {
+    var sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(sh));
+      return null;
+    }
+    return sh;
+  }
+
+  var vertSrc = VERT;
+  if (isGL2) vertSrc = "#version 300 es\n" + VERT.replace(/\battribute\b/g, "in");
+
+  var vs = compile(gl.VERTEX_SHADER, vertSrc);
+  var fs = compile(gl.FRAGMENT_SHADER, fragSource(FRAG_BODY));
+  if (!vs || !fs) {
+    bootMsg.textContent = "The fractal shaders failed to compile on this device.";
+    return;
+  }
+
+  var prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.bindAttribLocation(prog, 0, "aPos");
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(prog));
+    bootMsg.textContent = "The fractal program could not link on this device.";
+    return;
+  }
+  gl.useProgram(prog);
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+  var U = {
+    res:    gl.getUniformLocation(prog, "u_res"),
+    center: gl.getUniformLocation(prog, "u_center"),
+    scale:  gl.getUniformLocation(prog, "u_scale"),
+    time:   gl.getUniformLocation(prog, "u_time"),
+    mouse:  gl.getUniformLocation(prog, "u_mouse"),
+    vel:    gl.getUniformLocation(prog, "u_mouseVel"),
+    speed:  gl.getUniformLocation(prog, "u_speed"),
+    press:  gl.getUniformLocation(prog, "u_press"),
+    presence: gl.getUniformLocation(prog, "u_presence"),
+    warp:   gl.getUniformLocation(prog, "u_warp"),
+    pal:    gl.getUniformLocation(prog, "u_pal"),
+    iter:   gl.getUniformLocation(prog, "u_iter")
+  };
+
+  /* ---------- hotspots: the tour dives into each district, then warps on ---------- */
+  var SPOTS = [
+    { x: -0.745428, y:  0.113009 },   // seahorse valley
+    { x:  0.292985, y:  0.014905 },   // elephant valley
+    { x: -0.159241, y:  1.031742 },   // northern spires
+    { x: -1.250660, y:  0.020120 },   // west dendrites
+    { x: -1.040000, y:  0.183000 },   // the deep bay
+    { x:  0.360000, y: -0.290000 },   // south shelves
+    { x: -0.774680, y: -0.137400 },   // quiet spirals
+    { x:  0.451000, y:  0.523000 },   // high gardens
+    { x: -0.101100, y:  0.956300 },   // needle point
+    { x:  0.286900, y:  0.011300 }
+  ];
+  var LEG_TIME = 11.0;
+  var DIVE = 0.56, BLEND = 0.15, WIDE = 0.125;
+
+  /* ---------- colour moods: always inside the pink / purple family ---------- */
+  var MOODS = [
+    { hue:  0.00, name: "Cotton Candy" },
+    { hue:  0.05, name: "Bubblegum" },
+    { hue: -0.05, name: "Lilac Dream" },
+    { hue:  0.09, name: "Neon Nebula" },
+    { hue: -0.09, name: "Moonmallow" }
+  ];
+
+  /* ---------- state ---------- */
+  var state = {
+    tour: true,
+    mood: 0,
+    userZoom: 1,
+    panX: 0,
+    panY: 0,
+    press: 0,
+    speed: 0,
+    mx: 0, my: 0,
+    lastMx: 0, lastMy: 0,
+    hasMouse: false,
+    presence: 0,
+    scale: 0.12,
+    down: false
+  };
+
+  var cssW = 0, cssH = 0, dpr = 1, resScale = 1;
+  var maxIter = 200;
+
+  function resize() {
+    cssW = Math.max(1, window.innerWidth);
+    cssH = Math.max(1, window.innerHeight);
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    applyBacking();
+  }
+
+  function applyBacking() {
+    var w = Math.max(1, Math.round(cssW * dpr * resScale));
+    var h = Math.max(1, Math.round(cssH * dpr * resScale));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+    gl.viewport(0, 0, w, h);
+  }
+
+  function tourAt(t) {
+    var n = SPOTS.length;
+    var leg = Math.floor(t / LEG_TIME);
+    var f = t / LEG_TIME - leg;
+    var iA = ((leg % n) + n) % n;
+    var iB = ((leg + 1) % n + n) % n;
+    var A = SPOTS[iA];
+    var B = SPOTS[iB];
+    var gx, gy, scale, warp;
+
+    if (f < DIVE) {
+      var s = f / DIVE;
+      scale = WIDE * (1 - 0.80 * (s * s * (3 - 2 * s)));
+      gx = A.x;
+      gy = A.y;
+      warp = 0;
+    } else if (f < DIVE + BLEND) {
+      var u = (f - DIVE) / BLEND;
+      var b = u * u * (3 - 2 * u);
+      scale = WIDE * (0.20 + 0.80 * u * u);
+      gx = A.x + (B.x - A.x) * b;
+      gy = A.y + (B.y - A.y) * b;
+      warp = Math.pow(Math.sin(Math.PI * u), 3);
+    } else {
+      var w = (f - DIVE - BLEND) / (1 - DIVE - BLEND);
+      scale = WIDE;
+      gx = B.x;
+      gy = B.y;
+      warp = Math.pow(Math.cos(Math.PI * w * 0.5), 3);
+    }
+
+    var orb = scale * 0.16;
+    gx += orb * Math.cos(t * 0.21);
+    gy += orb * Math.sin(t * 0.19 + 1.1);
+
+    return { x: gx, y: gy, scale: scale, warp: warp };
+  }
+
+  /* ---------- pointer ---------- */
+  function setPointer(px, py) {
+    var r = canvas.getBoundingClientRect();
+    state.mx = (px - r.left);
+    state.my = (r.height - (py - r.top));   // flip to GL coords
+  }
+
+  window.addEventListener("pointermove", function (e) {
+    var dx = e.clientX - state.lastMx, dy = e.clientY - state.lastMy;
+    state.lastMx = e.clientX; state.lastMy = e.clientY;
+    setPointer(e.clientX, e.clientY);
+    state.hasMouse = true;
+    var mag = Math.min(Math.sqrt(dx * dx + dy * dy) / 26, 1);
+    state.speed = Math.max(mag, state.speed * 0.90);
+  }, { passive: true });
+
+  window.addEventListener("pointerleave", function () { state.hasMouse = false; });
+
+  canvas.addEventListener("pointerdown", function (e) {
+    state.down = true;
+    canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+    canvas.style.cursor = "grabbing";
+  });
+  window.addEventListener("pointerup", function () {
+    state.down = false;
+    canvas.style.cursor = "crosshair";
+  });
+
+  var dragFrom = null;
+  canvas.addEventListener("pointerdown", function (e) {
+    dragFrom = { x: e.clientX, y: e.clientY, px: state.panX, py: state.panY };
+  });
+  window.addEventListener("pointermove", function (e) {
+    if (!state.down || !dragFrom) return;
+    var r = canvas.getBoundingClientRect();
+    var k = state.scale / r.height;
+    state.panX = dragFrom.px - (e.clientX - dragFrom.x) * k;
+    state.panY = dragFrom.py + (e.clientY - dragFrom.y) * k;
+  }, { passive: true });
+
+  canvas.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    var f = Math.exp(e.deltaY * 0.0012);
+    state.userZoom = Math.min(Math.max(state.userZoom * f, 0.12), 40);
+  }, { passive: false });
+
+  canvas.addEventListener("dblclick", function () {
+    state.userZoom = Math.min(Math.max(state.userZoom * 0.4, 0.12), 40);
+  });
+
+  /* ---------- controls ---------- */
+  function toggleFullscreen() {
+    var d = document, el = d.documentElement;
+    var isFs = d.fullscreenElement || d.webkitFullscreenElement;
+    if (!isFs) {
+      var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+      if (req) { var p = req.call(el); if (p && p.catch) p.catch(function () {}); }
+    } else {
+      var exit = d.exitFullscreen || d.webkitExitFullscreen;
+      if (exit) { var q = exit.call(d); if (q && q.catch) q.catch(function () {}); }
+    }
+  }
+  function syncFullscreenBtn() {
+    var on = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    var b = document.getElementById("btnFull");
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.childNodes[0].nodeValue = on ? "Exit Full" : "Fullscreen";
+  }
+  document.addEventListener("fullscreenchange", syncFullscreenBtn);
+  document.addEventListener("webkitfullscreenchange", syncFullscreenBtn);
+
+  function toggleUI() {
+    document.body.classList.toggle("chrome-off");
+  }
+
+  function resetView() {
+    state.userZoom = 1; state.panX = 0; state.panY = 0;
+    state.tour = true;
+    document.getElementById("btnTour").setAttribute("aria-pressed", "true");
+  }
+
+  document.getElementById("btnFull").addEventListener("click", toggleFullscreen);
+  document.getElementById("btnTour").addEventListener("click", function () {
+    state.tour = !state.tour;
+    this.setAttribute("aria-pressed", state.tour ? "true" : "false");
+    if (state.tour) { state.panX = 0; state.panY = 0; }
+  });
+  function paintMoodBtn() {
+    var b = document.getElementById("btnPal");
+    b.childNodes[0].nodeValue = MOODS[state.mood].name;
+  }
+  document.getElementById("btnPal").addEventListener("click", function () {
+    state.mood = (state.mood + 1) % MOODS.length;
+    paintMoodBtn();
+  });
+  paintMoodBtn();
+  document.getElementById("btnReset").addEventListener("click", resetView);
+  document.getElementById("btnUI").addEventListener("click", toggleUI);
+
+  window.addEventListener("keydown", function (e) {
+    var k = e.key.toLowerCase();
+    if (k === "f") { e.preventDefault(); toggleFullscreen(); }
+    else if (k === " ") { e.preventDefault(); document.getElementById("btnTour").click(); }
+    else if (k === "c") { document.getElementById("btnPal").click(); }
+    else if (k === "r") { resetView(); }
+    else if (k === "h") { toggleUI(); }
+    else if (k === "escape" && document.body.classList.contains("chrome-off")) { toggleUI(); }
+  });
+
+  window.addEventListener("resize", resize);
+  window.addEventListener("orientationchange", resize);
+  resize();
+  syncFullscreenBtn();
+  state.lastMx = window.innerWidth / 2;
+  state.lastMy = window.innerHeight / 2;
+  setPointer(state.lastMx, state.lastMy);
+
+  /* ---------- adaptive resolution ---------- */
+  var frameAcc = 0, frameCount = 0, degradeLock = 0;
+
+  /* ---------- loop ---------- */
+  var t0 = performance.now();
+  var paused = false;
+  document.addEventListener("visibilitychange", function () {
+    paused = document.hidden;
+    if (!paused) t0 = performance.now();
+  });
+
+  var hideHintAt = performance.now() + 11000;
+
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (paused) return;
+
+    var t = (now - t0) / 1000;
+
+    state.speed *= 0.935;
+    state.press += ((state.down ? 1 : 0) - state.press) * 0.12;
+    state.presence += ((state.hasMouse ? 1 : 0) - state.presence) * 0.08;
+
+    var center, baseScale, warp;
+    if (state.tour) {
+      var leg = tourAt(t);
+      center = leg;
+      baseScale = leg.scale;
+      warp = leg.warp;
+    } else {
+      var hold = tourAt(t * 0.45);
+      center = hold;
+      baseScale = hold.scale;
+      warp = 0;
+    }
+
+    var scale = baseScale * state.userZoom;
+    state.scale = scale;
+    var depth = Math.log2(1 / scale);
+    maxIter = Math.round(Math.min(420, Math.max(150, 180 + 90 * depth)));
+
+    var cx = center.x + state.panX;
+    var cy = center.y + state.panY;
+    // gentle drift so it never feels frozen
+    cx += 0.0018 * Math.sin(t * 0.21);
+    cy += 0.0018 * Math.cos(t * 0.17);
+
+    gl.uniform2f(U.res, canvas.width, canvas.height);
+    gl.uniform2f(U.center, cx, cy);
+    gl.uniform1f(U.scale, scale);
+    gl.uniform1f(U.time, t);
+    gl.uniform2f(U.mouse, state.hasMouse ? state.mx * (canvas.width / cssW) : canvas.width * 0.5,
+                            state.hasMouse ? state.my * (canvas.height / cssH) : canvas.height * 0.5);
+    gl.uniform2f(U.vel, state.speed, state.speed);
+    gl.uniform1f(U.speed, state.hasMouse ? state.speed : 0);
+    gl.uniform1f(U.press, state.press);
+    gl.uniform1f(U.presence, state.presence);
+    gl.uniform1f(U.warp, warp);
+    gl.uniform1f(U.pal, MOODS[state.mood].hue);
+    gl.uniform1i(U.iter, maxIter);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    /* keep it silky on weaker GPUs */
+    frameAcc += now - (frame._last || now);
+    frame._last = now;
+    frameCount++;
+    if (frameCount >= 45) {
+      var avg = frameAcc / frameCount;
+      frameAcc = 0; frameCount = 0;
+      if (avg > 26 && resScale > 0.6 && performance.now() > degradeLock) {
+        resScale = Math.max(0.6, resScale - 0.15);
+        degradeLock = performance.now() + 1500;
+        applyBacking();
+      }
+    }
+
+    if (!boot.classList.contains("gone") && now - t0 > 350) {
+      boot.classList.add("gone");
+    }
+    if (now > hideHintAt && hintEl) {
+      hintEl.style.opacity = "0";
+    }
+  }
+
+  /* first paint, then go */
+  gl.uniform1f(U.time, 0);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  requestAnimationFrame(frame);
+
+  // click anywhere on empty sky to reveal the controls again
+  canvas.addEventListener("click", function () {
+    if (document.body.classList.contains("chrome-off")) toggleUI();
+  });
+})();
+</script>
+</body>
+</html>
